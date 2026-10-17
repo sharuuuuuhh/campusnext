@@ -10,6 +10,12 @@ A Java-first MVP for finding and managing Paying Guest accommodation near Colleg
 - Maven WAR package
 - HTML5, CSS3 and vanilla JavaScript, with no frontend build step
 
+## Architecture and data model
+
+The application follows the project PDF's three tiers: the browser UI is the presentation tier, Jakarta Servlets on Tomcat implement the application tier, and MySQL is the database tier accessed through JDBC. The core relational entities follow the PDF EER: `users`, `pg_owners`, and `pg_details`. One owner can have many PG details; student users can submit many inquiries, each for one PG. The EER's login, owner identity, contact, ID proof, PG category, rent, food facility, vacancy, and distance fields are represented directly. The MVP also stores total beds, room type, full PG address, amenities, listing moderation and visibility, inquiries, and feedback.
+
+`database/schema.sql` creates a fresh database, while `database/seed.sql` adds clearly marked simulated listings. Existing v1 databases should be backed up before migration. From the repository root, open the MySQL client with `mysql -u root -p campusnest`, then run `source database/migrate-v1-to-eer.sql;`. The migration retains copies of the original data in tables ending with `_v1_backup` and carries users, listings, inquiries, feedback, and owner proof metadata into the new model. The local workspace database was migrated and backed up under the ignored `work/` directory.
+
 ## Run locally
 
 ### Ready-to-run Windows setup in this workspace

@@ -16,7 +16,7 @@ public class CampusNestListener implements ServletContextListener {
             return;
         }
         try (Connection c = Db.connect(); PreparedStatement ps = c.prepareStatement(
-                "INSERT IGNORE INTO users(full_name,email,password_hash,role,status) VALUES(?,?,?,'ADMIN','ACTIVE')")) {
+                "INSERT IGNORE INTO users(name,email,password_hash,role,account_status) VALUES(?,?,?,'ADMIN','ACTIVE')")) {
             ps.setString(1, "CampusNest Admin"); ps.setString(2, email.trim().toLowerCase()); ps.setString(3, Passwords.hash(password));
             ps.executeUpdate();
         } catch (Exception e) { event.getServletContext().log("Admin bootstrap could not connect to the database.", e); }

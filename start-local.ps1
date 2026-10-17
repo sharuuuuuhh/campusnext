@@ -27,6 +27,10 @@ if ($schemaExists.Trim() -eq '0') {
     if ($LASTEXITCODE -ne 0) { throw 'Could not create the CampusNest database schema.' }
     & $mysql --protocol=tcp -h 127.0.0.1 -uroot -e 'source database/seed.sql'
     if ($LASTEXITCODE -ne 0) { throw 'Could not load the simulated PG listings.' }
+} else {
+    $eerReady = & $mysql --protocol=tcp -h 127.0.0.1 -uroot -N -e "SELECT COUNT(*) FROM information_schema.columns WHERE table_schema='campusnest' AND ((table_name='users' AND column_name='user_id') OR (table_name='pg_owners' AND column_name='owner_id') OR (table_name='pg_details' AND column_name='pg_id'))"
+    if ($LASTEXITCODE -ne 0) { throw 'Could not inspect the local CampusNest database.' }
+    if ($eerReady.Trim() -ne '3') { throw 'This database uses the earlier v1 model. Back it up, then run database/migrate-v1-to-eer.sql from the MySQL client.' }
 }
 
 if (-not (Test-Path $maven)) { throw 'Local Maven is missing. Run mvn package after installing Maven.' }
