@@ -30,7 +30,7 @@ public class ApiServlet extends HttpServlet {
     @Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String path = path(req);
         try {
-            if (path.equals("/health")) { Json.send(resp, 200, Map.of("status", "ok", "database", databaseAlive())); return; }
+            if (path.equals("/health")) { boolean ready=databaseAlive();Json.send(resp,ready?200:503,Map.of("status",ready?"ok":"unavailable","database",ready));return; }
             if (path.equals("/auth/csrf")) { Json.send(resp, 200, Map.of("csrfToken", csrf(req.getSession(true)))); return; }
             if (path.equals("/auth/me")) { Map<String,Object> me=new LinkedHashMap<>();me.put("user",sessionUser(req));me.put("csrfToken",csrf(req.getSession(true)));Json.send(resp,200,me);return; }
             if (path.equals("/listings")) { Json.send(resp, 200, listListings(req, false)); return; }

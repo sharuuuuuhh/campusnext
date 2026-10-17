@@ -1,0 +1,10 @@
+.git
+.github
+work
+outputs
+target
+.gitignore
+.env
+.env.*
+*.log
+campusnest-private

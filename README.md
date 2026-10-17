@@ -18,6 +18,8 @@ The application follows the project PDF's three tiers: the browser UI is the pre
 
 ## Run locally
 
+For public hosting, see the [Railway deployment guide](deployment/RAILWAY.md). Railway is configured for the Java/Tomcat app and a MySQL service.
+
 ### Ready-to-run Windows setup in this workspace
 
 The project workspace contains a portable MySQL 8.4.11 and Tomcat 10.1.61 setup under `work/`. Run `./start-local.ps1` from PowerShell to rebuild the WAR, start the local services, and open the app at `http://127.0.0.1:8081/campusnest/`. MySQL stores its data under `work/mysql-data`; the local admin password is in `work/admin-credentials.txt`. These files are for this development workspace only.
