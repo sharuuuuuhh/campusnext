@@ -1,0 +1,22 @@
+# Build output and local tool installations
+/target/
+/work/
+
+# Local uploads and application data
+/campusnest-private/
+*.db
+*.sqlite
+*.sqlite3
+
+# Local configuration and credentials
+.env
+.env.*
+!.env.example
+*credentials*.txt
+*secrets*.txt
+
+# IDE and operating-system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,76 @@
+CREATE DATABASE IF NOT EXISTS campusnest CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE campusnest;
+
+CREATE TABLE IF NOT EXISTS users (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  full_name VARCHAR(140) NOT NULL,
+  email VARCHAR(190) NOT NULL UNIQUE,
+  phone VARCHAR(32),
+  password_hash VARCHAR(255) NOT NULL,
+  role ENUM('STUDENT','OWNER','ADMIN') NOT NULL,
+  status ENUM('PENDING','APPROVED','REJECTED','ACTIVE') NOT NULL DEFAULT 'ACTIVE',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS owner_documents (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NOT NULL UNIQUE,
+  stored_name VARCHAR(180) NOT NULL,
+  original_name VARCHAR(180) NOT NULL,
+  media_type VARCHAR(80) NOT NULL,
+  uploaded_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  reviewed_at TIMESTAMP NULL,
+  CONSTRAINT fk_document_owner FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS pg_listings (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  demo_key VARCHAR(80) UNIQUE,
+  owner_user_id BIGINT NULL,
+  owner_name VARCHAR(140) NOT NULL,
+  name VARCHAR(180) NOT NULL,
+  gender ENUM('Boys','Girls') NOT NULL,
+  monthly_rent INT UNSIGNED NOT NULL,
+  room_type ENUM('Shared','Single') NOT NULL,
+  food_available BOOLEAN NOT NULL DEFAULT FALSE,
+  beds_total SMALLINT UNSIGNED NOT NULL,
+  beds_vacant SMALLINT UNSIGNED NOT NULL,
+  distance_km DECIMAL(5,2) NOT NULL,
+  address VARCHAR(255) NOT NULL,
+  amenities_json JSON NOT NULL,
+  description TEXT,
+  contact_phone VARCHAR(32) NOT NULL,
+  moderation_status ENUM('PENDING','APPROVED','REJECTED') NOT NULL DEFAULT 'PENDING',
+  is_visible BOOLEAN NOT NULL DEFAULT TRUE,
+  is_demo BOOLEAN NOT NULL DEFAULT FALSE,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_listing_owner FOREIGN KEY (owner_user_id) REFERENCES users(id) ON DELETE SET NULL,
+  CONSTRAINT chk_beds_vacant CHECK (beds_vacant <= beds_total),
+  INDEX idx_public_listing (is_visible, moderation_status, gender, monthly_rent, distance_km)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS inquiries (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  listing_id BIGINT NOT NULL,
+  student_user_id BIGINT NULL,
+  sender_name VARCHAR(140) NOT NULL,
+  sender_phone VARCHAR(32) NOT NULL,
+  message VARCHAR(2000) NOT NULL,
+  status ENUM('NEW','READ','CLOSED') NOT NULL DEFAULT 'NEW',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_inquiry_listing FOREIGN KEY (listing_id) REFERENCES pg_listings(id) ON DELETE CASCADE,
+  CONSTRAINT fk_inquiry_student FOREIGN KEY (student_user_id) REFERENCES users(id) ON DELETE SET NULL,
+  INDEX idx_inquiry_listing (listing_id, created_at)
+) ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS feedback (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  user_id BIGINT NULL,
+  name VARCHAR(140) NOT NULL,
+  email VARCHAR(190),
+  message VARCHAR(2000) NOT NULL,
+  status ENUM('NEW','REVIEWED','CLOSED') NOT NULL DEFAULT 'NEW',
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_feedback_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB;
