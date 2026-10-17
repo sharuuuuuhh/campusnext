@@ -1,0 +1,14 @@
+FROM maven:3.9.16-eclipse-temurin-17-noble AS build
+WORKDIR /workspace
+COPY pom.xml .
+COPY src ./src
+RUN mvn -B -DskipTests package
+
+FROM tomcat:10.1.61-jdk17-temurin-noble
+WORKDIR /usr/local/tomcat
+# Vercel terminates HTTPS at its edge. Tomcat's session cookie should still be Secure.
+# PORT is provided by Vercel and passed as a Java system property for Tomcat's XML config.
+RUN sed -i 's/<Connector port="8080" protocol="HTTP\/1.1"/<Connector port="${PORT}" protocol="HTTP\/1.1" scheme="https" secure="true"/' /usr/local/tomcat/conf/server.xml
+COPY --from=build /workspace/target/campusnest.war /usr/local/tomcat/webapps/ROOT.war
+EXPOSE 8080
+CMD ["sh", "-c", "CATALINA_OPTS=\"$CATALINA_OPTS -DPORT=${PORT:-8080}\" catalina.sh run"]
