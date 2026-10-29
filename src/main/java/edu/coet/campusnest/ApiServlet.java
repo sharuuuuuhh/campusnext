@@ -87,6 +87,7 @@ public class ApiServlet extends HttpServlet {
     @SuppressWarnings("unchecked") private Map<String,Object> sessionUser(HttpServletRequest req){Object u=req.getSession(false)==null?null:req.getSession(false).getAttribute("user");return u instanceof Map<?,?>?(Map<String,Object>)u:null;}
     private boolean require(HttpServletRequest req,HttpServletResponse resp,String role)throws IOException{Map<String,Object> user=sessionUser(req);if(user==null){Json.send(resp,401,Json.error("Sign in to continue."));return false;}if(!role.equals(user.get("role"))){Json.send(resp,403,Json.error("This account cannot access that page."));return false;}if("OWNER".equals(role)&&!"APPROVED".equals(user.get("status"))){Json.send(resp,403,Json.error("Owner verification is still pending."));return false;}return true;}
     private static String str(Map<String,Object> m,String k){Object v=m.get(k);return v==null?"":String.valueOf(v).trim();}
+    private static String raw(Map<String,Object> m,String k){Object v=m.get(k);return v==null?"":String.valueOf(v);}
     private static int num(Map<String,Object> m,String k,int fallback){Object v=m.get(k);if(v instanceof Number n)return n.intValue();try{return Integer.parseInt(String.valueOf(v));}catch(Exception e){return fallback;}}
     private static double decimal(Map<String,Object> m,String k,double fallback){Object v=m.get(k);if(v instanceof Number n)return n.doubleValue();try{return Double.parseDouble(String.valueOf(v));}catch(Exception e){return fallback;}}
     private static String email(String value){return value.trim().toLowerCase(Locale.ROOT);}
@@ -115,7 +116,7 @@ public class ApiServlet extends HttpServlet {
     }
 
     private void studentRegister(HttpServletRequest req,HttpServletResponse resp)throws SQLException,IOException{
-        Map<String,Object> b=Json.read(req);String name=str(b,"name"),email=email(str(b,"email")),password=str(b,"password"),phone=str(b,"phone");
+        Map<String,Object> b=Json.read(req);String name=str(b,"name"),email=email(str(b,"email")),password=raw(b,"password"),phone=str(b,"phone");
         if(name.isBlank()||email.isBlank()||password.length()<8){Json.send(resp,400,Json.error("Enter your name, a valid email and a password of at least 8 characters."));return;}
         try(Connection c=Db.connect();PreparedStatement ps=c.prepareStatement("INSERT INTO users(name,email,phone_no,password_hash,role,account_status) VALUES(?,?,?,?,'STUDENT','ACTIVE')",Statement.RETURN_GENERATED_KEYS)){
             ps.setString(1,name);ps.setString(2,email);ps.setString(3,phone.isBlank()?null:phone);ps.setString(4,Passwords.hash(password));ps.executeUpdate();long id;try(ResultSet keys=ps.getGeneratedKeys()){keys.next();id=keys.getLong(1);}Map<String,Object> user=Map.of("id",id,"name",name,"email",email,"role","STUDENT","status","ACTIVE");req.changeSessionId();req.getSession(true).setAttribute("user",user);Json.send(resp,201,Map.of("user",user,"csrfToken",csrf(req.getSession(false))));
@@ -123,7 +124,7 @@ public class ApiServlet extends HttpServlet {
     }
 
     private void login(HttpServletRequest req,HttpServletResponse resp)throws SQLException,IOException{
-        Map<String,Object> b=Json.read(req);String email=email(str(b,"email")),password=str(b,"password");
+        Map<String,Object> b=Json.read(req);String email=email(str(b,"email")),password=raw(b,"password");
         try(Connection c=Db.connect();PreparedStatement ps=c.prepareStatement("SELECT u.user_id,u.name,u.email,u.password_hash,u.role,u.account_status,o.owner_id,o.owner_status FROM users u LEFT JOIN pg_owners o ON o.user_id=u.user_id WHERE u.email=?")){
             ps.setString(1,email);try(ResultSet rs=ps.executeQuery()){if(!rs.next()||!Passwords.verify(password,rs.getString("password_hash"))){Json.send(resp,401,Json.error("Email or password is incorrect."));return;}if("DISABLED".equals(rs.getString("account_status"))){Json.send(resp,403,Json.error("This account is disabled."));return;}Map<String,Object> user=new LinkedHashMap<>();user.put("id",rs.getLong("user_id"));user.put("name",rs.getString("name"));user.put("email",rs.getString("email"));user.put("role",rs.getString("role"));user.put("status","OWNER".equals(rs.getString("role"))?rs.getString("owner_status"):rs.getString("account_status"));if("OWNER".equals(rs.getString("role")))user.put("ownerId",rs.getLong("owner_id"));req.changeSessionId();HttpSession session=req.getSession(true);session.setAttribute("user",user);Json.send(resp,200,Map.of("user",user,"csrfToken",csrf(session)));}
         }
