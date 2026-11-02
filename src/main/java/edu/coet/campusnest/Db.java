@@ -12,7 +12,7 @@ public final class Db {
                 System.getenv().getOrDefault("CAMPUSNEST_DB_URL",
                         "jdbc:mysql://localhost:3306/campusnest?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC"));
         String user = System.getProperty("CAMPUSNEST_DB_USER",
-                System.getenv().getOrDefault("CAMPUSNEST_DB_USER", "root"));
+                System.getenv().getOrDefault("CAMPUSNEST_DB_USER", ""));
         String password = System.getProperty("CAMPUSNEST_DB_PASSWORD",
                 System.getenv().getOrDefault("CAMPUSNEST_DB_PASSWORD", ""));
 
@@ -26,6 +26,15 @@ public final class Db {
             }
         } catch (ClassNotFoundException e) {
             throw new SQLException("Database JDBC driver is missing: " + e.getMessage(), e);
+        }
+
+        // If credentials are embedded directly inside the connection URL
+        if (user.isBlank() && (url.contains("user=") || url.contains(":****@"))) {
+            return DriverManager.getConnection(url);
+        }
+
+        if (user.isBlank() && url.startsWith("jdbc:mysql:")) {
+            user = "root";
         }
 
         return DriverManager.getConnection(url, user, password);
