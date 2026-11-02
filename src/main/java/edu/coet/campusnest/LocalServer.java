@@ -42,7 +42,15 @@ public class LocalServer {
         LOGGER.info("Starting CampusNest pure Java server for localhost...");
 
         try {
-            loadEnvFile();
+            boolean forceLocal = "true".equalsIgnoreCase(System.getProperty("USE_LOCAL_DB", System.getenv("USE_LOCAL_DB")));
+            if (!forceLocal) {
+                loadEnvFile();
+            } else {
+                LOGGER.info("[Database] USE_LOCAL_DB=true: Using purely local database (ignoring Supabase / external DB).");
+                System.clearProperty("CAMPUSNEST_DB_URL");
+                System.clearProperty("CAMPUSNEST_DB_USER");
+                System.clearProperty("CAMPUSNEST_DB_PASSWORD");
+            }
             configureDatabase();
             configureAdmin();
             startTomcat(port);
@@ -79,17 +87,20 @@ public class LocalServer {
     }
 
     private static void configureDatabase() throws Exception {
-        String customUrl = System.getProperty("CAMPUSNEST_DB_URL", System.getenv("CAMPUSNEST_DB_URL"));
-        if (customUrl != null && !customUrl.isBlank()) {
-            LOGGER.info("[Database] Using configured database URL: " + customUrl.replaceAll(":[^:@/]+@", ":****@"));
-            try (Connection c = Db.connect()) {
-                if (c.isValid(5)) {
-                    LOGGER.info("[Database] Connected successfully to configured external database.");
-                    return;
+        boolean forceLocal = "true".equalsIgnoreCase(System.getProperty("USE_LOCAL_DB", System.getenv("USE_LOCAL_DB")));
+        if (!forceLocal) {
+            String customUrl = System.getProperty("CAMPUSNEST_DB_URL", System.getenv("CAMPUSNEST_DB_URL"));
+            if (customUrl != null && !customUrl.isBlank()) {
+                LOGGER.info("[Database] Using configured database URL: " + customUrl.replaceAll(":[^:@/]+@", ":****@"));
+                try (Connection c = Db.connect()) {
+                    if (c.isValid(5)) {
+                        LOGGER.info("[Database] Connected successfully to configured external database.");
+                        return;
+                    }
+                } catch (Exception e) {
+                    LOGGER.warning("[Database] Connection to configured database failed: " + e.getMessage());
+                    throw e;
                 }
-            } catch (Exception e) {
-                LOGGER.warning("[Database] Connection to configured database failed: " + e.getMessage());
-                throw e;
             }
         }
 

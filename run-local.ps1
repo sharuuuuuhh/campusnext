@@ -1,11 +1,15 @@
-$ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+<#
+.SYNOPSIS
+  Run CampusNest locally with LOCAL Database (No Supabase)
+#>
 
-$maven = 'C:\Users\sharu\maven\bin\mvn.cmd'
-if (-not (Test-Path $maven)) {
-    $mvnCmd = Get-Command mvn -ErrorAction SilentlyContinue
-    if ($mvnCmd) { $maven = $mvnCmd.Source } else { $maven = 'mvn' }
-}
+$env:USE_LOCAL_DB = "true"
+$env:CAMPUSNEST_DB_URL = ""
+$env:CAMPUSNEST_DB_USER = ""
+$env:CAMPUSNEST_DB_PASSWORD = ""
 
-Write-Host "Starting COET CampusNest on http://localhost:8081/campusnest/ ..." -ForegroundColor Cyan
-& $maven compile exec:java -Dexec.mainClass="edu.coet.campusnest.LocalServer"
+Write-Host "=============================================================="
+Write-Host " Starting CampusNest on localhost:8081 with LOCAL Database"
+Write-Host "=============================================================="
+
+& "C:\Users\sharu\maven\bin\mvn.cmd" compile exec:java "-Dexec.mainClass=edu.coet.campusnest.LocalServer" "-DUSE_LOCAL_DB=true"
