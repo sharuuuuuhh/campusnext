@@ -1,6 +1,8 @@
-# COET CampusNest
+# COET CampusNest (KTU S3 Java OOPs Project)
 
-A Java-first MVP for finding and managing Paying Guest accommodation near College of Engineering Thalassery. The Servlet/JDBC/MySQL application owns search, accounts, owner verification, inquiries, listing moderation and vacancy data. The existing visual interface stays in HTML, CSS and vanilla JavaScript because it runs in the browser and calls the Java API with `fetch()`.
+A pure Java application for finding and managing Paying Guest accommodation near College of Engineering Thalassery (COET). Designed for **KTU Semester 3 (CST 205: Object Oriented Programming Using Java)**, the backend strictly implements core OOP paradigms: Encapsulation, Inheritance, Polymorphism, Abstraction, Custom Exceptions, Multithreading, and JDBC with MySQL.
+
+> For the comprehensive syllabus mapping and KTU viva voce preparation guide, see [KTU_S3_JAVA_OOPS_DOCUMENTATION.md](file:///c:/Users/sharu/campusnext/KTU_S3_JAVA_OOPS_DOCUMENTATION.md).
 
 ## Stack
 

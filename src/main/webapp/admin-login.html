@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f3f1e9">
+<title>Admin Sign In — CampusNest</title>
+<meta name="description" content="Administrator console sign-in for CampusNest moderation and verification.">
+<link rel="stylesheet" href="styles.css">
+<script>
+if (window.location.protocol === 'file:') {
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  window.location.replace('http://127.0.0.1:8081/campusnest/' + page + window.location.search + window.location.hash);
+}
+</script></head>
+<body class="auth-page">
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="CampusNest home">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M5 19.5 16 9l11 10.5M8.5 17v9h15v-9M13 26v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 28c3-2 6-2 9 0s6 2 9 0 4-2 6-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span>campus<span class="brand-light">nest</span></span>
+  </a>
+  <div class="nav-actions">
+    <a class="button button-outline" href="index.html">View Site ↗</a>
+  </div>
+</header>
+
+<main class="auth-page-wrap">
+  <div class="auth-card" id="auth-card">
+    <a href="index.html" class="auth-back-link">← Back to CampusNest</a>
+    
+    <div class="auth-header">
+      <span class="auth-role-tag tag-admin">🛡️ Administration Console</span>
+      <h1 class="auth-title">Admin Sign In</h1>
+      <p class="auth-subtitle">Restricted access portal for reviewing owner identity proofs, managing PG approvals, and moderation.</p>
+    </div>
+
+    <!-- Active session box if already logged in as Admin -->
+    <div id="active-session" hidden class="auth-session-card">
+      <div class="auth-notice-box info" id="session-info-text"></div>
+      <div class="auth-session-actions">
+        <a href="index.html?action=admin-dashboard" class="button button-dark">Open Admin Moderation Console →</a>
+        <button type="button" class="button button-outline" id="btn-logout">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Admin Login Form Container -->
+    <div id="form-container">
+      <div class="auth-notice-box warn">
+        <strong>Authorized personnel only.</strong> Administrative actions and verification decisions are recorded.
+      </div>
+
+      <form id="admin-login-form">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="admin-email">Administrator Email</label>
+            <input id="admin-email" type="email" required autocomplete="email" placeholder="admin@campusnest.local">
+          </div>
+          <div class="form-field full">
+            <label for="admin-pass">Admin Password</label>
+            <input id="admin-pass" type="password" required minlength="8" autocomplete="current-password" placeholder="••••••••">
+          </div>
+        </div>
+
+        <p class="form-message" id="admin-error" role="alert"></p>
+
+        <div class="form-actions" style="margin-top:20px">
+          <button type="submit" class="button button-dark" style="width:100%" id="admin-submit">Sign In to Admin Console →</button>
+        </div>
+      </form>
+
+      <div class="auth-notice-box info" style="margin-top:20px;font-size:11px">
+        <strong>Local Dev Credentials:</strong><br>
+        Email: <code>admin@campusnest.local</code><br>
+        Password: <code>admin12345678</code>
+      </div>
+    </div>
+
+    <!-- Portal Switchers -->
+    <div class="portal-switchers">
+      <div>Student user? <a href="student-login.html">Student Sign In ↗</a></div>
+      <div>PG Property Owner? <a href="owner-login.html">PG Owner Portal ↗</a></div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <a class="brand footer-brand" href="index.html">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M5 19.5 16 9l11 10.5M8.5 17v9h15v-9M13 26v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 28c3-2 6-2 9 0s6 2 9 0 4-2 6-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span>campus<span class="brand-light">nest</span></span>
+  </a>
+  <p>Admin Security Portal · COET Thalassery</p>
+  <div class="footer-links">
+    <a href="student-login.html">Student Login</a>
+    <a href="owner-login.html">Owner Portal</a>
+  </div>
+  <small class="copyright">© CampusNest · COET, Thalassery</small>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+let csrfToken = '';
+let currentUser = null;
+
+const toast = document.getElementById('toast');
+function showMessage(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+async function request(path, opts = {}) {
+  const headers = {};
+  if (!['GET', 'HEAD'].includes(opts.method || 'GET')) {
+    headers['X-CSRF-Token'] = csrfToken;
+  }
+  if (opts.body) {
+    headers['Content-Type'] = 'application/json';
+  }
+  const res = await fetch(`api${path}`, {
+    method: opts.method || 'GET',
+    credentials: 'same-origin',
+    headers,
+    body: opts.body ? JSON.stringify(opts.body) : undefined
+  });
+  let data = {};
+  try { data = await res.json(); } catch(e) {}
+  if (!res.ok) {
+    throw new Error(data.error || `Request failed (${res.status})`);
+  }
+  if (data.csrfToken) csrfToken = data.csrfToken;
+  return data;
+}
+
+const formAdmin = document.getElementById('admin-login-form');
+formAdmin.onsubmit = async (e) => {
+  e.preventDefault();
+  const errEl = document.getElementById('admin-error');
+  const btn = document.getElementById('admin-submit');
+  errEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Verifying admin authorization...';
+
+  try {
+    const res = await request('/auth/login', {
+      method: 'POST',
+      body: {
+        email: document.getElementById('admin-email').value.trim(),
+        password: document.getElementById('admin-pass').value
+      }
+    });
+
+    const user = res.user;
+    if (user.role !== 'ADMIN') {
+      await request('/auth/logout', { method: 'POST' });
+      errEl.innerHTML = 'Access Denied: This account does not possess administrator privileges. Please use the appropriate portal: <a href="student-login.html" style="text-decoration:underline">Student Login</a> or <a href="owner-login.html" style="text-decoration:underline">Owner Portal</a>.';
+      btn.disabled = false;
+      btn.textContent = 'Sign In to Admin Console →';
+      return;
+    }
+
+    showMessage('Admin authentication successful! Opening console...');
+    setTimeout(() => {
+      window.location.href = 'index.html?action=admin-dashboard';
+    }, 400);
+  } catch (err) {
+    errEl.textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = 'Sign In to Admin Console →';
+  }
+};
+
+// Initial session check
+async function init() {
+  try {
+    const csrfData = await request('/auth/csrf');
+    csrfToken = csrfData.csrfToken;
+    const meData = await request('/auth/me');
+    if (meData.user) {
+      currentUser = meData.user;
+      if (currentUser.role === 'ADMIN') {
+        document.getElementById('form-container').hidden = true;
+        document.getElementById('active-session').hidden = false;
+        document.getElementById('session-info-text').innerHTML = `Currently authenticated as Administrator: <strong>${currentUser.email}</strong>`;
+      }
+    }
+  } catch (e) {
+    console.error('Session init error:', e);
+  }
+}
+
+document.getElementById('btn-logout').onclick = async () => {
+  try {
+    await request('/auth/logout', { method: 'POST' });
+    window.location.reload();
+  } catch (e) {
+    showMessage(e.message);
+  }
+};
+
+init();
+</script>
+</body>
+</html>
+

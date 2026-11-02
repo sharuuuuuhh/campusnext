@@ -4,3 +4,161 @@
 @media(max-width:900px){.topbar{padding:0 4%}.hero{padding:50px 6%;grid-template-columns:.95fr 1.05fr;gap:5%;min-height:500px}.hero-art{height:330px}.hero h1{font-size:64px}.search-wrap{padding-left:5%;padding-right:5%}.search-panel{grid-template-columns:1.5fr 1fr 1fr auto}.filter-field:nth-of-type(4){display:none}.listing-grid{grid-template-columns:repeat(2,1fr)}.reassurance,.owner-banner{margin-left:4%;margin-right:4%}.footer{grid-template-columns:1fr 1fr}.footer-links{justify-content:flex-start;flex-wrap:wrap}.copyright{text-align:right}}
 @media(max-width:620px){html{scroll-padding-top:62px}.topbar{height:62px;padding:0 18px}.brand{font-size:19px}.brand-mark{width:27px}.desktop-nav{display:none}.nav-actions{gap:13px}.nav-cta{display:none}.menu-toggle{display:block}.hero{display:flex;flex-direction:column;align-items:stretch;gap:27px;padding:37px 22px 36px;min-height:auto}.hero-copy{padding:0}.hero .eyebrow{font-size:9px;margin-bottom:19px}.hero h1{font-size:58px}.hero-lede{font-size:13px;max-width:320px;margin-top:16px}.tagline{font-size:11px;max-width:290px;margin-bottom:18px}.hero-note{margin-top:20px}.hero-art{height:250px;width:100%}.room-window{height:142px;top:35px;right:13%;width:44%;border-width:6px}.room-shelf{top:184px;height:7px}.room-bed{height:77px}.bed-head{height:60px;bottom:55px}.bed-pillow{height:28px}.room-plant{transform:scale(.75);transform-origin:bottom left;left:8%;bottom:62px}.art-caption{left:14px;top:15px;font-size:12px}.art-label{right:13px;top:14px;font-size:7px}.search-wrap{padding:34px 17px 66px}.section-kicker{font-size:8px}.search-heading{display:block;margin:16px 0 19px}.search-heading h2{font-size:33px}.search-heading p{font-size:11px;max-width:260px}.owner-shortcut{margin-top:12px;min-height:36px}.search-panel{grid-template-columns:1fr 1fr;gap:12px;padding:14px}.search-input-wrap{grid-column:1/-1}.filter-field:nth-of-type(4){display:block}.search-button{grid-column:1/-1;min-height:43px}.advanced-toggle{grid-column:1/-1;padding:2px 0 0}.advanced-filters{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:12px}.advanced-filters[hidden]{display:none}.distance-field,.sort-field{min-width:0}.check-filter{grid-column:1/-1}.results-bar{align-items:flex-start;font-size:9px;gap:10px;padding:14px 0 10px}.listing-grid{grid-template-columns:1fr;gap:12px}.listing-image{height:186px}.card-info{padding:13px 14px}.reassurance{margin:0 17px 62px;padding:36px 23px;display:block}.reassurance h2{font-size:37px}.reassurance-copy>p:last-child{font-size:12px}.reassurance-list{margin-top:24px}.reassurance-list article{grid-template-columns:26px 1fr 20px;gap:9px;padding:15px 0}.reassurance-list h3{font-size:17px}.reassurance-list p{font-size:10px}.owner-banner{margin:0 17px 65px;padding:35px 23px 0;display:block;min-height:400px}.owner-banner h2{font-size:35px}.owner-banner>div:first-child>p:not(.eyebrow){font-size:11px}.owner-illustration{height:165px;margin-top:15px}.door{right:13%;width:142px;height:211px;bottom:-60px}.door:before{width:98px}.plant-pot{right:46%}.closing-note{margin:0 17px 43px;padding:0;display:block}.closing-note p{font-size:18px}.closing-link{display:inline-block;margin-top:14px}.footer{margin:0 17px;grid-template-columns:1fr 1fr;padding:21px 0;gap:8px}.footer>p{font-size:9px;text-align:right}.footer-links{grid-column:1/-1;gap:12px}.copyright{text-align:left;grid-column:1/-1}.dialog{max-height:92vh}.dialog-content{padding:22px 18px}.detail-gallery{height:200px;margin:-22px -18px 18px}.detail-heading h2{font-size:25px}.detail-heading .rent{font-size:15px}.detail-meta{gap:9px 13px;font-size:9px}.form-title{font-size:26px}.form-grid{gap:10px}.form-field input,.form-field select{min-height:39px}.dashboard-top{align-items:flex-start}.dashboard-top h2{font-size:24px}.dashboard-row{grid-template-columns:1fr auto;gap:7px}.row-actions{grid-column:1/-1}.admin-counts{gap:5px}.count-box{padding:9px 7px}.count-box b{font-size:21px}.count-box span{font-size:8px}.admin-row{align-items:flex-start}.admin-actions{flex-direction:column}.auth-tabs{gap:10px}.auth-tabs button{font-size:10px}.dialog-close{right:8px;top:8px}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
+
+/* ==========================================================================
+   CampusNest - Dedicated Auth Pages (Student, Owner, Admin)
+   ========================================================================== */
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--paper);
+}
+.auth-page-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+}
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border: 1px solid #dfded5;
+  box-shadow: 0 16px 40px rgba(24, 56, 43, 0.08);
+  padding: 36px 34px;
+}
+.auth-card.wide {
+  max-width: 580px;
+}
+.auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #697467;
+  margin-bottom: 22px;
+  transition: color 0.15s;
+}
+.auth-back-link:hover {
+  color: var(--green);
+}
+.auth-header {
+  margin-bottom: 22px;
+}
+.auth-role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 2px;
+  margin-bottom: 14px;
+}
+.tag-student {
+  background: #e3ebdf;
+  color: #214d3a;
+}
+.tag-owner {
+  background: #f8eedc;
+  color: #795514;
+}
+.tag-admin {
+  background: #e7e5f2;
+  color: #3b3068;
+}
+.auth-title {
+  font: 400 31px/1.15 var(--serif);
+  color: #213128;
+  margin: 0 0 8px;
+}
+.auth-subtitle {
+  font-size: 13px;
+  color: #6a7468;
+  margin: 0;
+  line-height: 1.6;
+}
+.auth-notice-box {
+  padding: 13px 15px;
+  background: #edf3eb;
+  border-left: 3px solid var(--green);
+  font-size: 12px;
+  color: #2e4334;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.auth-notice-box.warn {
+  background: #faf4e6;
+  border-left-color: #b57432;
+  color: #6e4919;
+}
+.auth-notice-box.info {
+  background: #edf0f5;
+  border-left-color: #395482;
+  color: #203554;
+}
+.portal-switchers {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: #6a7468;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.portal-switchers a {
+  color: var(--green);
+  font-weight: 600;
+}
+.portal-switchers a:hover {
+  text-decoration: underline;
+}
+.auth-session-card {
+  text-align: center;
+  padding: 10px 0;
+}
+.auth-session-card h3 {
+  font: 400 22px var(--serif);
+  margin: 10px 0 6px;
+  color: #213128;
+}
+.auth-session-card p {
+  font-size: 13px;
+  color: #647062;
+  margin: 0 0 20px;
+}
+.auth-session-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Role selection page opened by the home-page Login button. */
+.login-role-wrap{max-width:1120px;margin:0 auto;padding:clamp(46px,9vh,92px) clamp(20px,6vw,76px)}
+.login-role-heading{max-width:650px;margin:0 auto 38px;text-align:center}
+.login-role-heading .eyebrow{margin-bottom:12px}
+.login-role-heading h1{margin:0;color:#202a22;font:400 clamp(44px,7vw,72px)/1 Georgia,'Times New Roman',serif;letter-spacing:-.05em}
+.login-role-heading>p:last-child{margin:14px 0 0;color:#687166;font-size:14px}
+.login-role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.login-role-card{min-height:270px;padding:24px;display:flex;flex-direction:column;border:1px solid #dcded4;background:#faf9f5;color:#202a22;text-decoration:none;transition:transform .18s,border-color .18s,box-shadow .18s}
+.login-role-card:hover{transform:translateY(-4px);border-color:#244b3a;box-shadow:0 14px 35px rgba(32,42,34,.09)}
+.login-role-index{color:#687166;font-size:9px;font-weight:700;letter-spacing:.14em}
+.login-role-icon{width:40px;height:40px;margin:22px 0 12px;display:grid;place-items:center;border-radius:50%;background:#dce5d5;color:#244b3a;font:16px Georgia,'Times New Roman',serif}
+.role-owner .login-role-icon{background:#efe5d4;color:#79572f}
+.role-admin{background:#243e32;color:#f7f5ec;border-color:#243e32}
+.role-admin:hover{border-color:#466652;box-shadow:0 14px 35px rgba(24,56,43,.16)}
+.role-admin .login-role-index{color:#d8c495}.role-admin .login-role-icon{background:#d5e0c9;color:#243e32}
+.login-role-card h2{margin:0;font:400 30px/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.03em}
+.login-role-card p{max-width:290px;margin:9px 0 20px;color:#687166;font-size:12px;line-height:1.65}
+.role-admin p{color:#d7dfd1}
+.login-role-action{margin-top:auto;padding-top:14px;border-top:1px solid #dcded4;display:flex;justify-content:space-between;align-items:center;color:#244b3a;font-size:11px;font-weight:700}
+.role-owner .login-role-action{color:#79572f}.role-admin .login-role-action{border-color:rgba(255,255,255,.2);color:#f7f5ec}
+.login-role-action b{font-size:17px;font-weight:400}
+.login-role-note{margin:23px 0 0;text-align:center;color:#687166;font-size:11px}
+@media(max-width:760px){.login-role-wrap{padding-top:42px}.login-role-heading{margin-bottom:24px}.login-role-grid{grid-template-columns:1fr}.login-role-card{min-height:0;padding:20px}.login-role-icon{margin:16px 0 10px}}

@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f3f1e9">
+<title>PG Owner Sign In & Registration — CampusNest</title>
+<meta name="description" content="PG Owner portal for CampusNest. Manage accommodation listings, update room availability, and respond to student inquiries.">
+<link rel="stylesheet" href="styles.css">
+<script>
+if (window.location.protocol === 'file:') {
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  window.location.replace('http://127.0.0.1:8081/campusnest/' + page + window.location.search + window.location.hash);
+}
+</script></head>
+<body class="auth-page">
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="CampusNest home">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M5 19.5 16 9l11 10.5M8.5 17v9h15v-9M13 26v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 28c3-2 6-2 9 0s6 2 9 0 4-2 6-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span>campus<span class="brand-light">nest</span></span>
+  </a>
+  <div class="nav-actions">
+    <a class="button button-outline" href="index.html">View Public Listings ↗</a>
+  </div>
+</header>
+
+<main class="auth-page-wrap">
+  <div class="auth-card wide" id="auth-card">
+    <a href="index.html" class="auth-back-link">← Back to CampusNest</a>
+    
+    <div class="auth-header">
+      <span class="auth-role-tag tag-owner">🏠 PG Owner Portal</span>
+      <h1 class="auth-title" id="auth-title">Owner Sign In</h1>
+      <p class="auth-subtitle" id="auth-subtitle">Manage your PG properties, track bed vacancies, and receive direct inquiries from COET students.</p>
+    </div>
+
+    <!-- Active session box if already logged in -->
+    <div id="active-session" hidden class="auth-session-card">
+      <div class="auth-notice-box info" id="session-info-text"></div>
+      <div class="auth-session-actions">
+        <a href="index.html?action=owner-dashboard" class="button button-dark">Open Owner Dashboard →</a>
+        <button type="button" class="button button-outline" id="btn-logout">Sign Out</button>
+      </div>
+    </div>
+
+    <!-- Registration Confirmation Box -->
+    <div id="reg-success-box" hidden class="auth-session-card">
+      <div class="auth-notice-box" style="text-align:left">
+        <h3 style="margin:0 0 8px;font-size:16px;color:#214d3a">Application Received for Verification</h3>
+        <p style="margin:0 0 10px;font-size:13px;line-height:1.5" id="reg-success-msg"></p>
+        <p style="margin:0;font-size:12px;color:#5a6857">Once an administrator verifies your ID proof, you will be able to sign in and list your PG.</p>
+      </div>
+      <button type="button" class="button button-dark" style="width:100%" id="btn-switch-login">Return to Owner Sign In →</button>
+    </div>
+
+    <!-- Forms container -->
+    <div id="form-container">
+      <div class="auth-tabs" role="tablist">
+        <button type="button" id="tab-login" aria-selected="true">Owner Sign In</button>
+        <button type="button" id="tab-register" aria-selected="false">Register New Owner</button>
+      </div>
+
+      <!-- Owner Sign In Form -->
+      <form id="owner-login-form">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="login-email">Owner Email Address</label>
+            <input id="login-email" type="email" required autocomplete="email" placeholder="owner@example.com">
+          </div>
+          <div class="form-field full">
+            <label for="login-pass">Password</label>
+            <input id="login-pass" type="password" required minlength="8" autocomplete="current-password" placeholder="••••••••">
+          </div>
+        </div>
+
+        <p class="form-message" id="login-error" role="alert"></p>
+
+        <div class="form-actions" style="margin-top:20px">
+          <button type="submit" class="button button-dark" style="width:100%" id="login-submit">Access Owner Dashboard →</button>
+        </div>
+      </form>
+
+      <!-- Owner Register Form -->
+      <form id="owner-register-form" hidden>
+        <div class="auth-notice-box warn" style="margin-bottom:16px">
+          <strong>Identity verification required:</strong> Upload a valid government ID (Aadhaar, Voter ID, Driving License, or Passport). Files are stored securely outside the public web root.
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field full">
+            <label for="reg-name">Full Name</label>
+            <input id="reg-name" required autocomplete="name" placeholder="E.g., Ramesh Kumar">
+          </div>
+          <div class="form-field">
+            <label for="reg-email">Email Address</label>
+            <input id="reg-email" type="email" required autocomplete="email" placeholder="ramesh@example.com">
+          </div>
+          <div class="form-field">
+            <label for="reg-phone">Phone Number</label>
+            <input id="reg-phone" type="tel" required autocomplete="tel" placeholder="+91 98470 12345">
+          </div>
+          <div class="form-field full">
+            <label for="reg-address">Owner Residential Address</label>
+            <input id="reg-address" required autocomplete="street-address" placeholder="House name/no., Street, Post, Pin code">
+          </div>
+          <div class="form-field full">
+            <label for="reg-pass">Create Account Password (min. 8 characters)</label>
+            <input id="reg-pass" type="password" required minlength="8" autocomplete="new-password" placeholder="••••••••">
+          </div>
+          <div class="form-field full">
+            <label for="reg-proof">ID Proof Document (PDF, JPG, PNG — max 5 MB)</label>
+            <input id="reg-proof" type="file" accept="application/pdf,image/jpeg,image/png" required>
+            <span class="form-hint">Used strictly for administrative verification before public listing approval.</span>
+          </div>
+        </div>
+
+        <p class="form-message" id="reg-error" role="alert"></p>
+
+        <div class="form-actions" style="margin-top:20px">
+          <button type="submit" class="button button-dark" style="width:100%" id="reg-submit">Submit Application for Review →</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Portal Switchers -->
+    <div class="portal-switchers">
+      <div>Are you a student looking for a PG? <a href="student-login.html">Student Sign In ↗</a></div>
+      <div>Campus administrator? <a href="admin-login.html">Admin Console Sign In ↗</a></div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <a class="brand footer-brand" href="index.html">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M5 19.5 16 9l11 10.5M8.5 17v9h15v-9M13 26v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 28c3-2 6-2 9 0s6 2 9 0 4-2 6-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span>campus<span class="brand-light">nest</span></span>
+  </a>
+  <p>PG Owner Services · COET Thalassery</p>
+  <div class="footer-links">
+    <a href="student-login.html">Student Login</a>
+    <a href="admin-login.html">Admin Portal</a>
+  </div>
+  <small class="copyright">© CampusNest · COET, Thalassery</small>
+</footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+let csrfToken = '';
+let currentUser = null;
+
+const toast = document.getElementById('toast');
+function showMessage(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+async function request(path, opts = {}) {
+  const headers = {};
+  if (!['GET', 'HEAD'].includes(opts.method || 'GET')) {
+    headers['X-CSRF-Token'] = csrfToken;
+  }
+  if (opts.body && !opts.formData) {
+    headers['Content-Type'] = 'application/json';
+  }
+  const res = await fetch(`api${path}`, {
+    method: opts.method || 'GET',
+    credentials: 'same-origin',
+    headers,
+    body: opts.formData || (opts.body ? JSON.stringify(opts.body) : undefined)
+  });
+  let data = {};
+  try { data = await res.json(); } catch(e) {}
+  if (!res.ok) {
+    throw new Error(data.error || `Request failed (${res.status})`);
+  }
+  if (data.csrfToken) csrfToken = data.csrfToken;
+  return data;
+}
+
+// Tab Switching
+const tabLogin = document.getElementById('tab-login');
+const tabRegister = document.getElementById('tab-register');
+const formLogin = document.getElementById('owner-login-form');
+const formRegister = document.getElementById('owner-register-form');
+const authTitle = document.getElementById('auth-title');
+const authSubtitle = document.getElementById('auth-subtitle');
+
+tabLogin.onclick = () => {
+  tabLogin.setAttribute('aria-selected', 'true');
+  tabRegister.setAttribute('aria-selected', 'false');
+  formLogin.hidden = false;
+  formRegister.hidden = true;
+  authTitle.textContent = 'Owner Sign In';
+  authSubtitle.textContent = 'Manage your PG properties, track bed vacancies, and receive direct inquiries from COET students.';
+  document.getElementById('login-error').textContent = '';
+};
+
+tabRegister.onclick = () => {
+  tabLogin.setAttribute('aria-selected', 'false');
+  tabRegister.setAttribute('aria-selected', 'true');
+  formLogin.hidden = true;
+  formRegister.hidden = false;
+  authTitle.textContent = 'Register as PG Owner';
+  authSubtitle.textContent = 'Submit your owner profile and ID proof for verification before listing accommodations.';
+  document.getElementById('reg-error').textContent = '';
+};
+
+// Owner Login submission
+formLogin.onsubmit = async (e) => {
+  e.preventDefault();
+  const errEl = document.getElementById('login-error');
+  const btn = document.getElementById('login-submit');
+  errEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Verifying credentials...';
+
+  try {
+    const res = await request('/auth/login', {
+      method: 'POST',
+      body: {
+        email: document.getElementById('login-email').value.trim(),
+        password: document.getElementById('login-pass').value
+      }
+    });
+
+    const user = res.user;
+    if (user.role !== 'OWNER') {
+      await request('/auth/logout', { method: 'POST' });
+      if (user.role === 'STUDENT') {
+        errEl.innerHTML = 'This is a student account. Please use the <a href="student-login.html" style="text-decoration:underline;font-weight:bold">Student Login Page</a>.';
+      } else if (user.role === 'ADMIN') {
+        errEl.innerHTML = 'This is an administrator account. Please use the <a href="admin-login.html" style="text-decoration:underline;font-weight:bold">Admin Portal</a>.';
+      } else {
+        errEl.textContent = 'Access restricted to registered PG owners.';
+      }
+      btn.disabled = false;
+      btn.textContent = 'Access Owner Dashboard →';
+      return;
+    }
+
+    showMessage('Owner sign-in successful! Redirecting to dashboard...');
+    setTimeout(() => {
+      window.location.href = 'index.html?action=owner-dashboard';
+    }, 400);
+  } catch (err) {
+    errEl.textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = 'Access Owner Dashboard →';
+  }
+};
+
+// Owner Registration submission
+formRegister.onsubmit = async (e) => {
+  e.preventDefault();
+  const errEl = document.getElementById('reg-error');
+  const btn = document.getElementById('reg-submit');
+  errEl.textContent = '';
+
+  const proofFile = document.getElementById('reg-proof').files[0];
+  if (!proofFile) {
+    errEl.textContent = 'Please select a valid ID proof file (PDF, JPG, or PNG).';
+    return;
+  }
+  if (proofFile.size > 5 * 1024 * 1024) {
+    errEl.textContent = 'ID proof file size exceeds 5 MB. Please upload a smaller file.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Uploading details and proof...';
+
+  try {
+    const formData = new FormData();
+    formData.append('name', document.getElementById('reg-name').value.trim());
+    formData.append('email', document.getElementById('reg-email').value.trim());
+    formData.append('phone', document.getElementById('reg-phone').value.trim());
+    formData.append('address', document.getElementById('reg-address').value.trim());
+    formData.append('password', document.getElementById('reg-pass').value);
+    formData.append('idProof', proofFile);
+
+    const res = await request('/owners/register', {
+      method: 'POST',
+      formData: formData
+    });
+
+    document.getElementById('form-container').hidden = true;
+    document.getElementById('reg-success-box').hidden = false;
+    document.getElementById('reg-success-msg').textContent = res.message || 'Your registration has been submitted.';
+    showMessage('Registration submitted successfully.');
+  } catch (err) {
+    errEl.textContent = err.message;
+    btn.disabled = false;
+    btn.textContent = 'Submit Application for Review →';
+  }
+};
+
+document.getElementById('btn-switch-login').onclick = () => {
+  document.getElementById('reg-success-box').hidden = true;
+  document.getElementById('form-container').hidden = false;
+  tabLogin.click();
+};
+
+// Initial session check
+async function init() {
+  try {
+    const csrfData = await request('/auth/csrf');
+    csrfToken = csrfData.csrfToken;
+    const meData = await request('/auth/me');
+    if (meData.user) {
+      currentUser = meData.user;
+      if (currentUser.role === 'OWNER') {
+        document.getElementById('form-container').hidden = true;
+        document.getElementById('active-session').hidden = false;
+        document.getElementById('session-info-text').innerHTML = `Currently signed in as PG Owner: <strong>${currentUser.name || currentUser.email}</strong> (${currentUser.email})`;
+      }
+    }
+  } catch (e) {
+    console.error('Session init error:', e);
+  }
+}
+
+document.getElementById('btn-logout').onclick = async () => {
+  try {
+    await request('/auth/logout', { method: 'POST' });
+    window.location.reload();
+  } catch (e) {
+    showMessage(e.message);
+  }
+};
+
+init();
+</script>
+</body>
+</html>
+

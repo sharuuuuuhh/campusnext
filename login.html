@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#f3f1e9">
+<title>Login — CampusNest</title>
+<meta name="description" content="Choose Student, Owner, or Admin login for CampusNest.">
+<link rel="stylesheet" href="styles.css">
+<script>
+if (window.location.protocol === 'file:') {
+  const page = window.location.pathname.split('/').pop() || 'index.html';
+  window.location.replace('http://127.0.0.1:8081/campusnest/' + page + window.location.search + window.location.hash);
+}
+</script></head>
+<body class="login-choice-page">
+<header class="topbar">
+  <a class="brand" href="index.html" aria-label="CampusNest home">
+    <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32" fill="none"><path d="M5 19.5 16 9l11 10.5M8.5 17v9h15v-9M13 26v-6h6v6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 28c3-2 6-2 9 0s6 2 9 0 4-2 6-2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    <span>campus<span class="brand-light">nest</span></span>
+  </a>
+  <div class="nav-actions"><a class="button button-outline" href="index.html">Back to site</a></div>
+</header>
+<main class="login-role-wrap">
+  <section class="login-role-heading">
+    <p class="eyebrow">CAMPUSNEST ACCOUNT ACCESS</p>
+    <h1>Login</h1>
+    <p>Choose the account type you want to sign in with.</p>
+  </section>
+  <section class="login-role-grid" aria-label="Choose a login type">
+    <a class="login-role-card role-student" href="student-login.html">
+      <span class="login-role-index">01 / STUDENT</span><span class="login-role-icon" aria-hidden="true">S</span>
+      <h2>Student</h2><p>Explore PGs near COET, create your account, and contact owners.</p>
+      <span class="login-role-action">Student login <b aria-hidden="true">→</b></span>
+    </a>
+    <a class="login-role-card role-owner" href="owner-login.html">
+      <span class="login-role-index">02 / PROPERTY</span><span class="login-role-icon" aria-hidden="true">O</span>
+      <h2>Owner</h2><p>Manage PG listings, room availability, and student inquiries.</p>
+      <span class="login-role-action">Owner login <b aria-hidden="true">→</b></span>
+    </a>
+    <a class="login-role-card role-admin" href="admin-login.html">
+      <span class="login-role-index">03 / OPERATIONS</span><span class="login-role-icon" aria-hidden="true">A</span>
+      <h2>Admin</h2><p>Review owner applications and manage listings and feedback.</p>
+      <span class="login-role-action">Admin login <b aria-hidden="true">→</b></span>
+    </a>
+  </section>
+  <p class="login-role-note">Student registration and Owner registration are available on their sign-in pages.</p>
+</main>
+</body>
+</html>
