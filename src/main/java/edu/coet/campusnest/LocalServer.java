@@ -216,6 +216,14 @@ public class LocalServer {
         Tomcat.addServlet(ctx, "default", new org.apache.catalina.servlets.DefaultServlet());
         ctx.addServletMappingDecoded("/", "default");
         ctx.addWelcomeFile("index.html");
+        ctx.addMimeMapping("css", "text/css;charset=UTF-8");
+        ctx.addMimeMapping("js", "application/javascript;charset=UTF-8");
+        ctx.addMimeMapping("html", "text/html;charset=UTF-8");
+        ctx.addMimeMapping("png", "image/png");
+        ctx.addMimeMapping("jpg", "image/jpeg");
+        ctx.addMimeMapping("jpeg", "image/jpeg");
+        ctx.addMimeMapping("svg", "image/svg+xml");
+        ctx.addMimeMapping("json", "application/json;charset=UTF-8");
 
         Wrapper apiWrapper = Tomcat.addServlet(ctx, "apiServlet", new ApiServlet());
         apiWrapper.setMultipartConfigElement(new MultipartConfigElement(
@@ -234,6 +242,14 @@ public class LocalServer {
         Tomcat.addServlet(rootCtx, "defaultRoot", new org.apache.catalina.servlets.DefaultServlet());
         rootCtx.addServletMappingDecoded("/", "defaultRoot");
         rootCtx.addWelcomeFile("index.html");
+        rootCtx.addMimeMapping("css", "text/css;charset=UTF-8");
+        rootCtx.addMimeMapping("js", "application/javascript;charset=UTF-8");
+        rootCtx.addMimeMapping("html", "text/html;charset=UTF-8");
+        rootCtx.addMimeMapping("png", "image/png");
+        rootCtx.addMimeMapping("jpg", "image/jpeg");
+        rootCtx.addMimeMapping("jpeg", "image/jpeg");
+        rootCtx.addMimeMapping("svg", "image/svg+xml");
+        rootCtx.addMimeMapping("json", "application/json;charset=UTF-8");
 
         Wrapper apiWrapperRoot = Tomcat.addServlet(rootCtx, "apiServletRoot", new ApiServlet());
         apiWrapperRoot.setMultipartConfigElement(new MultipartConfigElement(

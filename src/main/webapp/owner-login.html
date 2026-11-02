@@ -6,13 +6,238 @@
 <meta name="theme-color" content="#f3f1e9">
 <title>PG Owner Sign In & Registration — CampusNest</title>
 <meta name="description" content="PG Owner portal for CampusNest. Manage accommodation listings, update room availability, and respond to student inquiries.">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=2.2">
 <script>
 if (window.location.protocol === 'file:') {
   const page = window.location.pathname.split('/').pop() || 'index.html';
   window.location.replace('http://127.0.0.1:8081/campusnest/' + page + window.location.search + window.location.hash);
 }
-</script></head>
+</script><style>
+/* Self-contained styling for Auth Portals */
+:root {
+  --paper: #f3f1e9;
+  --surface: #faf9f5;
+  --ink: #202a22;
+  --muted: #687166;
+  --line: #dcded4;
+  --green: #244b3a;
+  --green-deep: #18382b;
+  --sage: #dce5d5;
+  --serif: Georgia, 'Times New Roman', serif;
+  --sans: 'Aptos', 'Segoe UI', Arial, sans-serif;
+}
+body.auth-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  margin: 0;
+}
+.auth-page-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 20px;
+}
+.auth-card {
+  width: 100%;
+  max-width: 480px;
+  background: var(--surface);
+  border: 1px solid #dfded5;
+  box-shadow: 0 16px 40px rgba(24, 56, 43, 0.08);
+  padding: 36px 34px;
+}
+.auth-card.wide {
+  max-width: 580px;
+}
+.auth-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #697467;
+  margin-bottom: 22px;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.auth-back-link:hover {
+  color: var(--green);
+}
+.auth-header {
+  margin-bottom: 22px;
+}
+.auth-role-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 2px;
+  margin-bottom: 14px;
+}
+.tag-student {
+  background: #e3ebdf;
+  color: #214d3a;
+}
+.tag-owner {
+  background: #f8eedc;
+  color: #795514;
+}
+.tag-admin {
+  background: #e7e5f2;
+  color: #3b3068;
+}
+.auth-title {
+  font: 400 31px / 1.15 var(--serif);
+  color: #213128;
+  margin: 0 0 8px;
+}
+.auth-subtitle {
+  font-size: 13px;
+  color: #6a7468;
+  margin: 0;
+  line-height: 1.6;
+}
+.auth-notice-box {
+  padding: 13px 15px;
+  background: #edf3eb;
+  border-left: 3px solid var(--green);
+  font-size: 12px;
+  color: #2e4334;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+.auth-notice-box.warn {
+  background: #faf4e6;
+  border-left-color: #b57432;
+  color: #6e4919;
+}
+.auth-notice-box.info {
+  background: #edf0f5;
+  border-left-color: #395482;
+  color: #203554;
+}
+.portal-switchers {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+  color: #6a7468;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.portal-switchers a {
+  color: var(--green);
+  font-weight: 600;
+  text-decoration: none;
+}
+.portal-switchers a:hover {
+  text-decoration: underline;
+}
+.auth-tabs {
+  display: flex;
+  gap: 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 20px;
+}
+.auth-tabs button {
+  border: 0;
+  background: none;
+  font-size: 12px;
+  padding: 0 0 9px;
+  color: #717a70;
+  cursor: pointer;
+}
+.auth-tabs button[aria-selected="true"] {
+  border-bottom: 2px solid var(--green);
+  color: var(--green);
+  font-weight: 650;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px;
+}
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.form-field.full {
+  grid-column: 1 / -1;
+}
+.form-field label {
+  font-size: 10px;
+  color: #566354;
+  font-weight: 600;
+}
+.form-field input, .form-field select, .form-field textarea {
+  border: 1px solid #d6dbd0;
+  background: #fbfaf6;
+  min-height: 41px;
+  padding: 9px 10px;
+  font-size: 12px;
+  color: #29382e;
+}
+.form-field input:focus {
+  outline: 2px solid var(--green);
+}
+.form-hint {
+  font-size: 9px;
+  color: #7b8278;
+  margin: 0;
+}
+.form-message {
+  font-size: 11px;
+  color: #9b5844;
+  margin: 10px 0 0;
+}
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 46px;
+  padding: 0 19px;
+  border: 1px solid transparent;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background .18s;
+}
+.button-dark {
+  background: var(--green);
+  color: #fff;
+}
+.button-dark:hover {
+  background: var(--green-deep);
+}
+.button-outline {
+  background: transparent;
+  border-color: #aeb7a8;
+  color: var(--ink);
+}
+.button-outline:hover {
+  background: #e7e9df;
+}
+@media (max-width: 600px) {
+  .auth-card {
+    padding: 24px 18px;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
 <body class="auth-page">
 <header class="topbar">
   <a class="brand" href="index.html" aria-label="CampusNest home">

@@ -139,3 +139,26 @@
   gap: 10px;
 }
 
+/* Role selection page opened by the home-page Login button. */
+.login-role-wrap{max-width:1120px;margin:0 auto;padding:clamp(46px,9vh,92px) clamp(20px,6vw,76px)}
+.login-role-heading{max-width:650px;margin:0 auto 38px;text-align:center}
+.login-role-heading .eyebrow{margin-bottom:12px}
+.login-role-heading h1{margin:0;color:#202a22;font:400 clamp(44px,7vw,72px)/1 Georgia,'Times New Roman',serif;letter-spacing:-.05em}
+.login-role-heading>p:last-child{margin:14px 0 0;color:#687166;font-size:14px}
+.login-role-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}
+.login-role-card{min-height:270px;padding:24px;display:flex;flex-direction:column;border:1px solid #dcded4;background:#faf9f5;color:#202a22;text-decoration:none;transition:transform .18s,border-color .18s,box-shadow .18s}
+.login-role-card:hover{transform:translateY(-4px);border-color:#244b3a;box-shadow:0 14px 35px rgba(32,42,34,.09)}
+.login-role-index{color:#687166;font-size:9px;font-weight:700;letter-spacing:.14em}
+.login-role-icon{width:40px;height:40px;margin:22px 0 12px;display:grid;place-items:center;border-radius:50%;background:#dce5d5;color:#244b3a;font:16px Georgia,'Times New Roman',serif}
+.role-owner .login-role-icon{background:#efe5d4;color:#79572f}
+.role-admin{background:#243e32;color:#f7f5ec;border-color:#243e32}
+.role-admin:hover{border-color:#466652;box-shadow:0 14px 35px rgba(24,56,43,.16)}
+.role-admin .login-role-index{color:#d8c495}.role-admin .login-role-icon{background:#d5e0c9;color:#243e32}
+.login-role-card h2{margin:0;font:400 30px/1.1 Georgia,'Times New Roman',serif;letter-spacing:-.03em}
+.login-role-card p{max-width:290px;margin:9px 0 20px;color:#687166;font-size:12px;line-height:1.65}
+.role-admin p{color:#d7dfd1}
+.login-role-action{margin-top:auto;padding-top:14px;border-top:1px solid #dcded4;display:flex;justify-content:space-between;align-items:center;color:#244b3a;font-size:11px;font-weight:700}
+.role-owner .login-role-action{color:#79572f}.role-admin .login-role-action{border-color:rgba(255,255,255,.2);color:#f7f5ec}
+.login-role-action b{font-size:17px;font-weight:400}
+.login-role-note{margin:23px 0 0;text-align:center;color:#687166;font-size:11px}
+@media(max-width:760px){.login-role-wrap{padding-top:42px}.login-role-heading{margin-bottom:24px}.login-role-grid{grid-template-columns:1fr}.login-role-card{min-height:0;padding:20px}.login-role-icon{margin:16px 0 10px}}
