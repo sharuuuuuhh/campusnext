@@ -43,7 +43,6 @@ if ($schemaExists.Trim() -eq '0') {
 if (-not (Test-Path $maven)) { throw 'Local Maven is missing. Run mvn package after installing Maven.' }
 & $maven -q -DskipTests package
 if ($LASTEXITCODE -ne 0) { throw 'CampusNest did not build successfully.' }
-Copy-Item -LiteralPath (Join-Path $root 'target\campusnest.war') -Destination (Join-Path $tomcatHome 'webapps\campusnest.war') -Force
 
 $env:CAMPUSNEST_LOCAL_DEMO = 'true'
 $adminEmail = 'admin@campusnest.local'
@@ -69,6 +68,11 @@ if (Test-LocalPort 8081) {
     while ((Test-LocalPort 8081) -and (Get-Date) -lt $stopDeadline) { Start-Sleep -Milliseconds 500 }
     if (Test-LocalPort 8081) { throw 'The CampusNest Tomcat process did not release port 8081. Stop it and run this script again.' }
 }
+$deployedApp = Join-Path $tomcatHome 'webapps\campusnest'
+if (Test-Path -LiteralPath $deployedApp) {
+    Remove-Item -LiteralPath $deployedApp -Recurse -Force
+}
+Copy-Item -LiteralPath (Join-Path $root 'target\campusnest.war') -Destination (Join-Path $tomcatHome 'webapps\campusnest.war') -Force
 $tomcatLog = Join-Path $root 'work\tomcat-console.log'
 $tomcatError = Join-Path $root 'work\tomcat-error.log'
 Start-Process -FilePath (Join-Path $tomcatHome 'bin\catalina.bat') -ArgumentList 'run' -WorkingDirectory $tomcatHome -RedirectStandardOutput $tomcatLog -RedirectStandardError $tomcatError -WindowStyle Hidden
