@@ -18,6 +18,7 @@ import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,12 +42,39 @@ public class LocalServer {
         LOGGER.info("Starting CampusNest pure Java server for localhost...");
 
         try {
+            loadEnvFile();
             configureDatabase();
             configureAdmin();
             startTomcat(port);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Failed to start CampusNest LocalServer", e);
             System.exit(1);
+        }
+    }
+
+    private static void loadEnvFile() {
+        Path envPath = Path.of(".env");
+        if (!Files.exists(envPath)) return;
+        try {
+            List<String> lines = Files.readAllLines(envPath);
+            for (String line : lines) {
+                line = line.trim();
+                if (line.isEmpty() || line.startsWith("#")) continue;
+                int eq = line.indexOf('=');
+                if (eq > 0) {
+                    String key = line.substring(0, eq).trim();
+                    String val = line.substring(eq + 1).trim();
+                    if (val.startsWith("\"") && val.endsWith("\"") && val.length() >= 2) {
+                        val = val.substring(1, val.length() - 1);
+                    }
+                    if (System.getProperty(key) == null && System.getenv(key) == null) {
+                        System.setProperty(key, val);
+                    }
+                }
+            }
+            LOGGER.info("[Config] Successfully loaded environment variables from .env");
+        } catch (Exception e) {
+            LOGGER.warning("[Config] Could not parse .env file: " + e.getMessage());
         }
     }
 
