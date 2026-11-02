@@ -7,6 +7,13 @@ if (-not (Test-Path $maven)) {
     if ($mvnCmd) { $maven = $mvnCmd.Source } else { $maven = 'mvn' }
 }
 
+if (-not $env:JAVA_HOME) {
+    $javaCommand = Get-Command java.exe -ErrorAction SilentlyContinue
+    if (-not $javaCommand) { throw 'Java 17 is required. Install a JDK 17 and set JAVA_HOME.' }
+    $env:JAVA_HOME = Split-Path (Split-Path $javaCommand.Source -Parent) -Parent
+}
+$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
+
 function Test-LocalPort([int]$port) {
     return [bool](Test-NetConnection 127.0.0.1 -Port $port -InformationLevel Quiet -WarningAction SilentlyContinue)
 }
