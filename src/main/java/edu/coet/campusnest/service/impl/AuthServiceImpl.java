@@ -30,7 +30,16 @@ import java.util.UUID;
  * - Custom Exception handling
  */
 public class AuthServiceImpl implements AuthService {
-    private static final Set<String> ALLOWED_MEDIA_TYPES = Set.of("application/pdf", "image/jpeg", "image/png");
+    private static final Set<String> ALLOWED_MEDIA_TYPES = Set.of(
+            "application/pdf",
+            "application/x-pdf",
+            "image/jpeg",
+            "image/jpg",
+            "image/pjpeg",
+            "image/png",
+            "image/x-png",
+            "image/webp"
+    );
 
     private final UserDao userDao;
     private final OwnerDao ownerDao;
@@ -106,8 +115,17 @@ public class AuthServiceImpl implements AuthService {
         if (lower.endsWith(".pdf")) ext = ".pdf";
         else if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) ext = ".jpg";
         else if (lower.endsWith(".png")) ext = ".png";
+        else if (lower.endsWith(".webp")) ext = ".webp";
 
-        if (ext.isBlank() || proofMediaType == null || !ALLOWED_MEDIA_TYPES.contains(proofMediaType)) {
+        String cleanType = (proofMediaType != null) ? proofMediaType.split(";")[0].trim().toLowerCase(Locale.ROOT) : "";
+        if (cleanType.isBlank() || cleanType.equals("application/octet-stream")) {
+            if (ext.equals(".pdf")) cleanType = "application/pdf";
+            else if (ext.equals(".jpg")) cleanType = "image/jpeg";
+            else if (ext.equals(".png")) cleanType = "image/png";
+            else if (ext.equals(".webp")) cleanType = "image/webp";
+        }
+
+        if (ext.isBlank() || !ALLOWED_MEDIA_TYPES.contains(cleanType)) {
             throw new ValidationException("Identity proof must be a valid PDF, JPG, or PNG document.");
         }
 
@@ -139,7 +157,7 @@ public class AuthServiceImpl implements AuthService {
         owner.setOwnerStatus(OwnerStatus.PENDING);
         owner.setIdProofPath(storedFilename);
         owner.setProofOriginalName(originalName.substring(Math.max(0, originalName.length() - 180)));
-        owner.setProofMediaType(proofMediaType);
+        owner.setProofMediaType(cleanType.equals("image/jpg") || cleanType.equals("image/pjpeg") ? "image/jpeg" : cleanType);
 
         try {
             owner.validate();

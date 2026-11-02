@@ -59,7 +59,7 @@ public abstract class User extends BaseEntity {
             throw new ValidationException("A valid email address is required.");
         }
         if (phoneNo != null && !phoneNo.trim().isBlank()) {
-            String cleanPhone = phoneNo.trim().replaceAll("[\\s-]", "");
+            String cleanPhone = phoneNo.trim().replaceAll("[\\s\\-\\(\\)\\.]", "");
             if (cleanPhone.length() < 7 || cleanPhone.length() > 16) {
                 throw new ValidationException("Contact number must be between 7 and 16 digits.");
             }

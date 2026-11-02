@@ -109,7 +109,7 @@
           </div>
           <div class="form-field full">
             <label for="reg-proof">ID Proof Document (PDF, JPG, PNG — max 5 MB)</label>
-            <input id="reg-proof" type="file" accept="application/pdf,image/jpeg,image/png" required>
+            <input id="reg-proof" type="file" accept="application/pdf,image/jpeg,image/jpg,image/png,image/webp,.pdf,.jpg,.jpeg,.png,.webp" required>
             <span class="form-hint">Used strictly for administrative verification before public listing approval.</span>
           </div>
         </div>
@@ -164,6 +164,13 @@ function showMessage(msg) {
 async function request(path, opts = {}) {
   const headers = {};
   if (!['GET', 'HEAD'].includes(opts.method || 'GET')) {
+    if (!csrfToken) {
+      try {
+        const cRes = await fetch('api/auth/csrf');
+        const cData = await cRes.json();
+        if (cData.csrfToken) csrfToken = cData.csrfToken;
+      } catch (e) {}
+    }
     headers['X-CSRF-Token'] = csrfToken;
   }
   if (opts.body && !opts.formData) {

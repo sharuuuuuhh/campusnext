@@ -117,6 +117,13 @@ function showMessage(msg) {
 async function request(path, opts = {}) {
   const headers = {};
   if (!['GET', 'HEAD'].includes(opts.method || 'GET')) {
+    if (!csrfToken) {
+      try {
+        const cRes = await fetch('api/auth/csrf');
+        const cData = await cRes.json();
+        if (cData.csrfToken) csrfToken = cData.csrfToken;
+      } catch (e) {}
+    }
     headers['X-CSRF-Token'] = csrfToken;
   }
   if (opts.body) {

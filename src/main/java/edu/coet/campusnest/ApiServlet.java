@@ -315,12 +315,15 @@ public class ApiServlet extends HttpServlet {
 
     private void handleOwnerRegister(HttpServletRequest req, HttpServletResponse resp)
             throws IOException, ServletException, CampusNestException {
-        String name = trim(req.getParameter("name"));
-        String email = trim(req.getParameter("email"));
-        String phone = trim(req.getParameter("phone"));
-        String address = trim(req.getParameter("address"));
-        String password = req.getParameter("password");
-        Part proofPart = req.getPart("idProof");
+        String name = getPartOrParameter(req, "name");
+        String email = getPartOrParameter(req, "email");
+        String phone = getPartOrParameter(req, "phone");
+        String address = getPartOrParameter(req, "address");
+        String password = getPartOrParameterRaw(req, "password");
+        Part proofPart = null;
+        try {
+            proofPart = req.getPart("idProof");
+        } catch (Exception ignored) {}
 
         String originalName = (proofPart != null) ? Objects.toString(proofPart.getSubmittedFileName(), "") : "";
         String contentType = (proofPart != null) ? Objects.toString(proofPart.getContentType(), "") : "";
@@ -607,5 +610,33 @@ public class ApiServlet extends HttpServlet {
 
     private static String trim(String s) {
         return (s == null) ? "" : s.trim();
+    }
+
+    private static String getPartOrParameter(HttpServletRequest req, String name) {
+        String val = req.getParameter(name);
+        if (val != null && !val.isBlank()) return val.trim();
+        try {
+            Part part = req.getPart(name);
+            if (part != null) {
+                try (InputStream is = part.getInputStream()) {
+                    return new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8).trim();
+                }
+            }
+        } catch (Exception ignored) {}
+        return "";
+    }
+
+    private static String getPartOrParameterRaw(HttpServletRequest req, String name) {
+        String val = req.getParameter(name);
+        if (val != null && !val.isEmpty()) return val;
+        try {
+            Part part = req.getPart(name);
+            if (part != null) {
+                try (InputStream is = part.getInputStream()) {
+                    return new String(is.readAllBytes(), java.nio.charset.StandardCharsets.UTF_8);
+                }
+            }
+        } catch (Exception ignored) {}
+        return "";
     }
 }

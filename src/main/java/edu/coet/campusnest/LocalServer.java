@@ -4,8 +4,10 @@ import edu.coet.campusnest.dao.UserDao;
 import edu.coet.campusnest.dao.impl.UserDaoImpl;
 import edu.coet.campusnest.model.AdminUser;
 import edu.coet.campusnest.model.enums.AccountStatus;
+import jakarta.servlet.MultipartConfigElement;
 import org.apache.catalina.Context;
 import org.apache.catalina.WebResourceRoot;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.webresources.DirResourceSet;
 import org.apache.catalina.webresources.StandardRoot;
@@ -215,7 +217,13 @@ public class LocalServer {
         ctx.addServletMappingDecoded("/", "default");
         ctx.addWelcomeFile("index.html");
 
-        Tomcat.addServlet(ctx, "apiServlet", new ApiServlet());
+        Wrapper apiWrapper = Tomcat.addServlet(ctx, "apiServlet", new ApiServlet());
+        apiWrapper.setMultipartConfigElement(new MultipartConfigElement(
+                System.getProperty("java.io.tmpdir"),
+                5_242_880L,
+                6_291_456L,
+                1_048_576
+        ));
         ctx.addServletMappingDecoded("/api/*", "apiServlet");
         ctx.addApplicationListener(CampusNestListener.class.getName());
 
@@ -227,7 +235,13 @@ public class LocalServer {
         rootCtx.addServletMappingDecoded("/", "defaultRoot");
         rootCtx.addWelcomeFile("index.html");
 
-        Tomcat.addServlet(rootCtx, "apiServletRoot", new ApiServlet());
+        Wrapper apiWrapperRoot = Tomcat.addServlet(rootCtx, "apiServletRoot", new ApiServlet());
+        apiWrapperRoot.setMultipartConfigElement(new MultipartConfigElement(
+                System.getProperty("java.io.tmpdir"),
+                5_242_880L,
+                6_291_456L,
+                1_048_576
+        ));
         rootCtx.addServletMappingDecoded("/api/*", "apiServletRoot");
         rootCtx.addApplicationListener(CampusNestListener.class.getName());
 

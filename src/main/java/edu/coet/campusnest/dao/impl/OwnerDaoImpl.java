@@ -78,7 +78,7 @@ public class OwnerDaoImpl extends AbstractJdbcDao implements OwnerDao {
                      "o.proof_original_name, o.proof_media_type, o.proof_reviewed_at, o.owner_status, o.is_demo, o.created_at, " +
                      "u.email, u.password_hash, u.account_status " +
                      "FROM pg_owners o JOIN users u ON u.user_id = o.user_id " +
-                     "ORDER BY FIELD(o.owner_status, 'PENDING', 'APPROVED', 'REJECTED'), o.created_at DESC";
+                     "ORDER BY CASE o.owner_status WHEN 'PENDING' THEN 1 WHEN 'APPROVED' THEN 2 WHEN 'REJECTED' THEN 3 ELSE 4 END, o.created_at DESC";
         try (Connection c = getConnection(); PreparedStatement ps = c.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             List<OwnerUser> list = new ArrayList<>();
