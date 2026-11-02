@@ -136,3 +136,4 @@ ON CONFLICT (demo_key) DO UPDATE SET
   is_visible = TRUE,
   moderation_status = 'APPROVED',
   is_demo = TRUE;
+

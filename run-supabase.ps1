@@ -21,3 +21,4 @@ if (-not $env:CAMPUSNEST_DB_PASSWORD) {
 
 Write-Host "Starting CampusNest with Supabase backend on http://localhost:8081/campusnest/ ..."
 & "C:\Users\sharu\maven\bin\mvn.cmd" compile exec:java "-Dexec.mainClass=edu.coet.campusnest.LocalServer"
+
